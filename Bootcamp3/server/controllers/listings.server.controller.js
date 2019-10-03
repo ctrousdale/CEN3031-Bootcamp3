@@ -58,10 +58,22 @@ exports.update = function(req, res) {
   var listing = req.listing;
 
   /* Replace the listings's properties with the new properties found in req.body */
- 
+	// Directly call from req.body:
+	listing.name = req.body.name;
+	listing.code = req.body.code;
+	listing.coordinates = req.body.coordinates;
+	listing.address = req.body.address;
   /*save the coordinates (located in req.results if there is an address property) */
  
   /* Save the listing */
+  listing.save(function(err)	{
+	 if (err)	{
+		 throw err;
+	 } 
+	 else	{
+		 res.json(listing);
+	 }
+  });
 
 };
 
@@ -70,12 +82,30 @@ exports.delete = function(req, res) {
   var listing = req.listing;
 
   /* Add your code to remove the listins */
-
+	Listing.findByIdAndRemove(listing._id, function(err)	{
+		if (err)	{
+			throw err;
+		}
+		else	{
+			// From exports.read above:
+			res.json(listing);
+		}
+	});
 };
 
 /* Retreive all the directory listings, sorted alphabetically by listing code */
 exports.list = function(req, res) {
   /* Add your code */
+  Listing.find({}, function(err, data)	{
+	  if (err)	{
+		  throw err;
+	  }
+	  
+		res.json(data);
+	  
+	  //https://www.w3schools.com/js/js_array_sort.asp:
+	  //Sort alphabetically by listing code:
+  }).sort({code : 1});
 };
 
 /* 
